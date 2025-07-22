@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.cqupt.mapper.CustomerMapper">
+    <resultMap id="BaseResultMap" type="com.cqupt.pojo.Customer">
+        <id column="id" property="id"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="customer_age" property="customerAge"/>
+        <result column="customer_sex" property="customerSex"/>
+        <result column="id_card" property="idCard"/>
+        <result column="room_no" property="roomNo"/>
+        <result column="building_no" property="buildingNo"/>
+        <result column="checkin_date" property="checkinDate"/>
+        <result column="expiration_date" property="expirationDate"/>
+        <result column="contact_tel" property="contactTel"/>
+        <result column="bed_id" property="bedId"/>
+        <result column="psychosomatic_state" property="psychosomaticState"/>
+        <result column="attention" property="attention"/>
+        <result column="birthday" property="birthday"/>
+        <result column="height" property="height"/>
+        <result column="weight" property="weight"/>
+        <result column="blood_type" property="bloodType"/>
+        <result column="file_path" property="filePath"/>
+        <result column="user_id" property="userId"/>
+        <result column="level_id" property="levelId"/>
+        <result column="family_member" property="familyMember"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+          id,
+          is_deleted,
+          customer_name,
+          customer_age,
+          customer_sex,
+          id_card,
+          room_no,
+          building_no,
+          checkin_date,
+          expiration_date,
+          contact_tel,
+          bed_id,
+          psychosomatic_state,
+          attention,birthday,
+          height,weight,
+          blood_type,
+          file_path,
+          user_id,
+          level_id,
+          family_member
+    </sql>
+
+    <select id="selectCustomerVo" resultType="com.cqupt.vo.CustomerInfoVo">
+        SELECT
+        c.id,
+        c.is_deleted,
+        c.customer_name,
+        c.customer_age,
+        c.customer_sex,
+        c.id_card,
+        c.room_no,
+        c.building_no,
+        c.checkin_date,
+        c.expiration_date,
+        c.contact_tel,
+        c.bed_id,
+        c.psychosomatic_state,
+        c.attention,
+        c.birthday,
+        c.height,
+        c.weight,
+        c.blood_type,
+        c.file_path,
+        c.user_id,
+        c.level_id,
+        c.family_member,
+        u.nick_name,
+        n.level_name,
+        b.bed_no
+        from customer c
+        LEFT JOIN nurse_level n ON c.level_id=n.id
+        LEFT JOIN `user` u ON c.user_id=u.id
+        LEFT JOIN bed b ON c.bed_id=b.id
+        <where>
+            <if test="customerName!=null and customerName!=''">
+                AND c.customer_name LIKE CONCAT('%',#{customerName},'%')
+            </if>
+            <if test="userId!=null">
+                AND c.user_id=#{userId}
+            </if>
+            <if test="oldType!=null and oldType==1">
+                AND (SELECT COUNT(1) FROM customer_nurse_item cni WHERE cni.customer_id=c.id AND cni.is_deleted=0)=0
+            </if>
+            <if test="oldType!=null and oldType==2">
+                AND (SELECT COUNT(1) FROM customer_nurse_item cni WHERE cni.customer_id=c.id AND cni.is_deleted=0)>0
+            </if>
+            <if test="oldType!=null and oldType==3">
+                AND c.user_id=-1
+            </if>
+            AND c.is_deleted=0
+        </where>
+        ORDER BY c.id DESC
+    </select>
+
+</mapper>
+
+

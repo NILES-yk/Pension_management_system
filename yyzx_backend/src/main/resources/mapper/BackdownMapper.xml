@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.cqupt.mapper.BackdownMapper">
+
+    <resultMap id="BaseResultMap" type="com.cqupt.pojo.Backdown">
+        <id column="id" property="id"/>
+        <result column="remarks" property="remarks"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="customer_id" property="customerId"/>
+        <result column="retreat_time" property="retreatTime"/>
+        <result column="retreat_type" property="retreatType"/>
+        <result column="retreat_reason" property="retreatReason"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="audit_person" property="auditPerson"/>
+        <result column="audit_time" property="auditTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,remarks,is_deleted,customer_id,retreat_time,
+          retreat_type,retreat_reason,audit_status,audit_person,audit_time
+    </sql>
+
+    <select id="selectBackdownPage" resultType="com.cqupt.vo.BackdownVo">
+        SELECT DISTINCT
+        b.id,
+        b.remarks,
+        b.is_deleted,
+        b.customer_id,
+        b.retreat_time,
+        b.retreat_type,
+        b.retreat_reason,
+        b.audit_status,
+        b.audit_time,
+        b.audit_person,
+        bd.bed_details,
+        c.checkin_date,
+        c.bed_id,
+        c.customer_name
+        FROM backdown b
+        LEFT JOIN customer c ON c.id=b.customer_id
+        LEFT JOIN bed_details bd ON bd.customer_id=b.customer_id
+        LEFT JOIN `user` u ON u.id=c.user_id
+        <where>
+            b.is_deleted=0
+            <if test="userId!=null">
+                AND u.id=#{userId}
+            </if>
+        </where>
+
+    </select>
+
+
+</mapper>

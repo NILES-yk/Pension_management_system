@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.cqupt.mapper.BedMapper">
+
+    <!--通用查询映射结果-->
+    <resultMap id="BaseResultMap" type="bed">
+        <id column="id" property="id" />
+        <result column="room_no" property="roomNo" />
+        <result column="bed_status" property="bedStatus" />
+        <result column="remarks" property="remarks" />
+        <result column="bed_no" property="bedNo" />
+    </resultMap>
+
+    <!--通用查询结果列-->
+    <sql id="Base_Column_List">
+        id,room_no,bed_status,remarks,bed_no
+    </sql>
+
+    <select id="selectBedCount" resultType="com.cqupt.vo.BedUseDetailsVo">
+        SELECT
+                (SELECT count(*) FROM bed) AS bed_total,
+                (SELECT count(*) FROM bed WHERE bed_status = 1) AS bed_available,
+                (SELECT count(*) FROM bed WHERE bed_status = 2) AS bed_occupied,
+                (SELECT count(*) FROM bed WHERE bed_status = 3) AS bed_outward
+    </select>
+
+</mapper>
